@@ -32,6 +32,16 @@ class Performance {
     _data.add(questionData);
   }
 
+  List<QuestionData> get data => List.from(_data);
+
+  Duration getMaxDuration() {
+    Duration result = Duration();
+    for (QuestionData data in _data) {
+      if (data.duration > result) result = Duration() + data.duration;
+    }
+    return result;
+  }
+
   Duration getTotalTime() {
     Duration result = Duration();
     for (QuestionData data in _data) {
