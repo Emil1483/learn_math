@@ -17,7 +17,7 @@ class CompletedRoute extends StatelessWidget {
   Widget _buildGraph(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
-    final List<QuestionData> data = performance.data;
+    final List<QuestionData> data = performance.getSortedData();
     final int maxSecounds = performance.getMaxDuration().inMilliseconds;
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 32.0),
@@ -25,6 +25,12 @@ class CompletedRoute extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: data.map((QuestionData qData) {
           final double fraction = qData.duration.inMilliseconds / maxSecounds;
+          Color color = Colors.green[600];
+          if (qData.tries > 0) {
+            color = Theme.of(context).accentColor;
+          } else if (qData.tries > 1) {
+            color = Colors.red;
+          }
           return Padding(
             padding: EdgeInsets.symmetric(vertical: 4.0),
             child: Row(
@@ -44,8 +50,23 @@ class CompletedRoute extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8.0),
                       child: CustomPaint(
                         painter: FractionPainter(
-                            fraction: fraction,
-                            partColor: Theme.of(context).accentColor),
+                          fraction: fraction,
+                          partColor: color,
+                        ),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 8.0),
+                            child: Text(
+                              (qData.duration.inMilliseconds / 1000)
+                                  .toStringAsFixed(1),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ),

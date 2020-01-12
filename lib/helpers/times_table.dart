@@ -42,6 +42,18 @@ class Performance {
     return result;
   }
 
+  List<QuestionData> getSortedData() {
+    List<QuestionData> result = data;
+    result.sort((QuestionData a, QuestionData b) {
+      if (a.question.factor1 != b.question.factor1) {
+        return a.question.factor1 - b.question.factor1;
+      } else {
+        return a.question.factor2 - b.question.factor2;
+      }
+    });
+    return result;
+  }
+
   Duration getTotalTime() {
     Duration result = Duration();
     for (QuestionData data in _data) {
@@ -68,16 +80,13 @@ class TimesTable {
   int get total => _allQuestions.length;
 
   TimesTable() {
-    _possible.add(Question(1, 2, 2));
-    _possible.add(Question(2, 2, 4));
-    _possible.add(Question(3, 2, 6));
-    _allQuestions = List.from(_possible);
-    return;
-    for (int i = 1; i < 10 - 1; i++) {
+    for (int i = 1; i < 10; i++) {
       for (int j = i; j < 10; j++) {
         _possible.add(Question(i, j, i * j));
       }
     }
+    print(_possible);
+    _allQuestions = List.from(_possible);
   }
 
   Question nextQuestion() => _possible.removeAt(
