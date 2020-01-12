@@ -85,7 +85,6 @@ class TimesTable {
         _possible.add(Question(i, j, i * j));
       }
     }
-    print(_possible);
     _allQuestions = List.from(_possible);
   }
 
