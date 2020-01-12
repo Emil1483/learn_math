@@ -18,21 +18,21 @@ class _HomeRouteState extends State<HomeRoute>
   final TextEditingController _controller = TextEditingController();
 
   AnimationController _animation;
-  DateTime _whenStarted;
 
-  Question _question;
-  int _correct = 0;
-  bool _wrong = false;
+  final Performance _performance = Performance();
+  Question _currentQuestion;
+  DateTime _currentTime = DateTime.now();
+  int _tries = 0;
 
   @override
   void initState() {
     super.initState();
-    _question = _table.nextQuestion();
+    _currentQuestion = _table.nextQuestion();
+
     _animation = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 400),
     );
-    _whenStarted = DateTime.now();
   }
 
   @override
@@ -45,15 +45,12 @@ class _HomeRouteState extends State<HomeRoute>
     if (_table.length <= 0) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (BuildContext context) => CompletedRoute(
-            DateTime.now().difference(_whenStarted),
-            _correct,
-          ),
+          builder: (BuildContext context) => CompletedRoute(_performance),
         ),
       );
       return;
     }
-    setState(() => _question = _table.nextQuestion());
+    setState(() => _currentQuestion = _table.nextQuestion());
   }
 
   double _shake(double t) {
@@ -84,15 +81,22 @@ class _HomeRouteState extends State<HomeRoute>
               try {
                 String str = _controller.text;
                 int ans = int.parse(str);
-                if (ans != _question.ans) {
-                  _wrong = true;
+                if (ans != _currentQuestion.ans) {
+                  _tries++;
                   _animation.fling(
                     velocity: _animation.isDismissed ? 1 : -1,
                   );
                   return;
                 }
-                if (!_wrong) setState(() => _correct++);
-                _wrong = false;
+                _performance.addQuestionData(
+                  QuestionData(
+                    question: _currentQuestion.copy(),
+                    duration: DateTime.now().difference(_currentTime),
+                    tries: _tries,
+                  ),
+                );
+                _currentTime = DateTime.now();
+                _tries = 0;
                 _nextQuestion(context);
                 _controller.clear();
               } catch (_) {
@@ -125,7 +129,7 @@ class _HomeRouteState extends State<HomeRoute>
               flex: 3,
               child: Center(
                 child: Text(
-                  _question.toString(),
+                  _currentQuestion.toString(),
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 64.0),
                 ),
@@ -144,7 +148,7 @@ class _HomeRouteState extends State<HomeRoute>
             Expanded(
               flex: 1,
               child: Text(
-                "Total Correct\n $_correct",
+                "Problems Left\n ${_table.length + 1}",
                 textAlign: TextAlign.center,
                 style: TextStyle(fontWeight: FontWeight.w200),
               ),

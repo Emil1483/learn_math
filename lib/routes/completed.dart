@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../ui_elements/main_button.dart';
+import '../helpers/times_table.dart';
 
 class CompletedRoute extends StatelessWidget {
-  final Duration duration;
-  final int correct;
+  final Performance performance;
 
-  const CompletedRoute(this.duration, this.correct);
+  const CompletedRoute(this.performance);
 
   String _format(int value) {
     String result = value.toString();
@@ -16,9 +16,10 @@ class CompletedRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int hours = duration.inHours;
-    int minutes = duration.inMinutes - hours * 60;
-    int secounds = duration.inSeconds - hours * 60 * 60 - minutes * 60;
+    Duration totalTime = performance.getTotalTime();
+    int hours = totalTime.inHours;
+    int minutes = totalTime.inMinutes - hours * 60;
+    int secounds = totalTime.inSeconds - hours * 60 * 60 - minutes * 60;
     return Scaffold(
       appBar: AppBar(
         title: Text("You did it!"),
@@ -40,7 +41,7 @@ class CompletedRoute extends StatelessWidget {
             ),
             SizedBox(height: 8.0),
             Text(
-              "with $correct on your first try",
+              "with ${performance.getCorrectOnFirst()}/${performance.length} on your first try",
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w200),
             ),
