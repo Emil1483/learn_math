@@ -8,6 +8,10 @@ import '../ui_elements/main_button.dart';
 import './completed.dart';
 
 class HomeRoute extends StatefulWidget {
+  final Function showAd;
+
+  const HomeRoute({@required this.showAd});
+
   @override
   _HomeRouteState createState() => _HomeRouteState();
 }
@@ -44,6 +48,7 @@ class _HomeRouteState extends State<HomeRoute>
 
   void _nextQuestion(BuildContext context) {
     if (_table.length <= 0) {
+      widget.showAd();
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (BuildContext context) => CompletedRoute(_performance),

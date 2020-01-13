@@ -14,29 +14,43 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   BannerAd _bannerAd;
+  InterstitialAd _interstitialAd;
+  static const MobileAdTargetingInfo _targetingInfo = MobileAdTargetingInfo(
+    keywords: [
+      "math",
+      "school",
+      "books",
+      "thinking",
+    ],
+    childDirected: false,
+    testDevices: <String>["3C2BACC3B6177D291D421EFA6B1DBCE3"],
+  );
 
-  @override
-  initState() {
-    super.initState();
-  }
-
-  Future _initAdBanner() async {
+  Future<void> _initAdBanner() async {
     _bannerAd = BannerAd(
       adUnitId: AdvertIds.bannerId,
       size: AdSize.fullBanner,
-      targetingInfo: MobileAdTargetingInfo(
-        keywords: [
-          "math",
-          "school",
-          "books",
-          "thinking",
-        ],
-        childDirected: false,
-        testDevices: <String>["3C2BACC3B6177D291D421EFA6B1DBCE3"],
-      ),
+      targetingInfo: _targetingInfo,
     );
     await _bannerAd.load();
     await _bannerAd.show(anchorType: AnchorType.bottom);
+  }
+
+  void _initInterstitialAd() {
+    _interstitialAd = InterstitialAd(
+      adUnitId: AdvertIds.interstitialId,
+      targetingInfo: _targetingInfo,
+      listener: (MobileAdEvent event) {
+        if (event == MobileAdEvent.closed) {
+          _initInterstitialAd();
+        }
+      },
+    );
+  }
+
+  Future<void> showAd() async {
+    await _interstitialAd.load();
+    await _interstitialAd.show();
   }
 
   @override
@@ -45,6 +59,7 @@ class _MyAppState extends State<MyApp> {
       appId: AdvertIds.appId,
     );
     _initAdBanner();
+    _initInterstitialAd();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
@@ -67,7 +82,7 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
       ),
-      home: HomeRoute(),
+      home: HomeRoute(showAd: showAd),
     );
   }
 }
