@@ -83,9 +83,7 @@ class TimesTable {
     for (int i = 1; i < 10; i++) {
       for (int j = i; j < 10; j++) {
         _possible.add(Question(i, j, i * j));
-        break;
       }
-      break;
     }
     _allQuestions = List.from(_possible);
   }
