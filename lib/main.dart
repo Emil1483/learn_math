@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import './routes/home_route.dart';
+import './advert_ids.dart';
 
 void main() => runApp(MyApp());
 
@@ -21,12 +22,12 @@ class _MyAppState extends State<MyApp> {
 
   Future _initAdBanner() async {
     _bannerAd = BannerAd(
-      adUnitId: "ca-app-pub-3940256099942544/6300978111",
+      adUnitId: AdvertIds.bannerId,
       size: AdSize.fullBanner,
       targetingInfo: MobileAdTargetingInfo(
         keywords: [
-          "quotes",
-          "reading",
+          "math",
+          "school",
           "books",
           "thinking",
         ],
@@ -41,7 +42,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     FirebaseAdMob.instance.initialize(
-      appId: "ca-app-pub-3940256099942544~3347511713",
+      appId: AdvertIds.appId,
     );
     _initAdBanner();
     SystemChrome.setPreferredOrientations([
