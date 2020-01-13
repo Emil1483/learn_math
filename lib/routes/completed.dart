@@ -26,10 +26,10 @@ class CompletedRoute extends StatelessWidget {
         children: data.map((QuestionData qData) {
           final double fraction = qData.duration.inMilliseconds / maxSecounds;
           Color color = Colors.green[600];
-          if (qData.tries > 0) {
-            color = Theme.of(context).accentColor;
-          } else if (qData.tries > 1) {
+          if (qData.tries > 1) {
             color = Colors.red;
+          } else if (qData.tries > 0) {
+            color = Theme.of(context).accentColor;
           }
           return Padding(
             padding: EdgeInsets.symmetric(vertical: 4.0),
@@ -126,7 +126,7 @@ class CompletedRoute extends StatelessWidget {
             ),
           ),
           Align(
-            alignment: Alignment(0, 0.85),
+            alignment: Alignment(0, 0.75),
             child: Wrap(
               children: <Widget>[
                 Column(
@@ -160,7 +160,7 @@ class CompletedRoute extends StatelessWidget {
         children: <Widget>[
           _buildMainWidget(context),
           _buildGraph(context),
-          SizedBox(height: 32.0),
+          SizedBox(height: 102.0),
         ],
       ),
     );

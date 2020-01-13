@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:firebase_admob/firebase_admob.dart';
 
 import '../helpers/times_table.dart';
 import '../ui_elements/main_button.dart';
@@ -127,7 +128,8 @@ class _HomeRouteState extends State<HomeRoute>
           children: <Widget>[
             Expanded(
               flex: 3,
-              child: Center(
+              child: Align(
+                alignment: Alignment(0, 1),
                 child: Text(
                   _currentQuestion.toString(),
                   textAlign: TextAlign.center,
@@ -136,8 +138,9 @@ class _HomeRouteState extends State<HomeRoute>
               ),
             ),
             Expanded(
-              flex: 3,
+              flex: 4,
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   _buildTextField(),
                   SizedBox(height: 22.0),
@@ -146,11 +149,14 @@ class _HomeRouteState extends State<HomeRoute>
               ),
             ),
             Expanded(
-              flex: 1,
-              child: Text(
-                "Problems Left\n ${_table.length + 1}",
-                textAlign: TextAlign.center,
-                style: TextStyle(fontWeight: FontWeight.w200),
+              flex: 2,
+              child: Align(
+                alignment: Alignment(0, -1),
+                child: Text(
+                  "Problems Left\n ${_table.length + 1}",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontWeight: FontWeight.w200),
+                ),
               ),
             ),
           ],
