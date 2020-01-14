@@ -1,4 +1,4 @@
-package com.example.learn_math
+package tech.djupvik.math
 
 import android.os.Bundle
 
