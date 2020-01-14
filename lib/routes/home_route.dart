@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:firebase_admob/firebase_admob.dart';
 
 import '../helpers/times_table.dart';
 import '../ui_elements/main_button.dart';
