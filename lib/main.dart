@@ -1,6 +1,7 @@
 import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 import './routes/home_route.dart';
 import './advert_ids.dart';
@@ -36,6 +37,12 @@ class _MyAppState extends State<MyApp> {
     await _bannerAd.show(anchorType: AnchorType.bottom);
   }
 
+  Future<void> _initNotifications() async {
+    final FirebaseMessaging fb = FirebaseMessaging();
+    fb.requestNotificationPermissions();
+    print(await fb.getToken());
+  }
+
   void _initInterstitialAd() {
     _interstitialAd = InterstitialAd(
       adUnitId: AdvertIds.interstitialId,
@@ -60,6 +67,9 @@ class _MyAppState extends State<MyApp> {
     );
     _initAdBanner();
     _initInterstitialAd();
+
+    _initNotifications();
+
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
