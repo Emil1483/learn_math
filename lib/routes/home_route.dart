@@ -3,7 +3,6 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../helpers/times_table.dart';
-import '../ui_elements/main_button.dart';
 import './completed.dart';
 
 class HomeRoute extends StatefulWidget {
@@ -20,8 +19,6 @@ class _HomeRouteState extends State<HomeRoute>
   final TimesTable _table = TimesTable();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _controller = TextEditingController();
-
-  //TODO: add auto check
 
   AnimationController _animation;
 
