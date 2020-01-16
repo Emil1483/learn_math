@@ -21,12 +21,16 @@ class _HomeRouteState extends State<HomeRoute>
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _controller = TextEditingController();
 
+  //TODO: add auto check
+
   AnimationController _animation;
 
   final Performance _performance = Performance();
   Question _currentQuestion;
   DateTime _currentTime = DateTime.now();
   int _tries = 0;
+  bool _newTry = true;
+  bool _cantUnderstand = false;
 
   @override
   void initState() {
@@ -43,6 +47,49 @@ class _HomeRouteState extends State<HomeRoute>
   void dispose() {
     super.dispose();
     _animation.dispose();
+    _controller.dispose();
+  }
+
+  void _onInputChanged(String str) {
+    if (str.isEmpty) _newTry = true;
+
+    try {
+      int ans = int.parse(str);
+
+      setState(() => _cantUnderstand = false);
+
+      if (ans.toString().length < _currentQuestion.ans.toString().length) {
+        _newTry = true;
+      }
+
+      if (ans.toString().length != _currentQuestion.ans.toString().length) {
+        return;
+      }
+      if (ans != _currentQuestion.ans) {
+        if (!_newTry) return;
+        _tries++;
+        _animation.fling(
+          velocity: _animation.isDismissed ? 1 : -1,
+        );
+        _newTry = false;
+        return;
+      }
+      _performance.addQuestionData(
+        QuestionData(
+          question: _currentQuestion.copy(),
+          duration: DateTime.now().difference(_currentTime),
+          tries: _tries,
+        ),
+      );
+      _currentTime = DateTime.now();
+      _tries = 0;
+      _nextQuestion(context);
+      _controller.clear();
+    } catch (_) {
+      setState(() {
+        _cantUnderstand = true;
+      });
+    }
   }
 
   void _nextQuestion(BuildContext context) {
@@ -63,57 +110,42 @@ class _HomeRouteState extends State<HomeRoute>
   }
 
   Widget _buildTextField() {
-    return Container(
-      width: 120,
-      child: TextField(
-        controller: _controller,
-        textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 32.0),
-        keyboardType: TextInputType.number,
-      ),
-    );
-  }
-
-  Widget _buildCheckButton() {
     return AnimatedBuilder(
       animation: _animation,
       builder: (BuildContext context, _) {
         return Transform.translate(
           offset: Offset(_shake(_animation.value), 0),
-          child: MainButton(
-            onPressed: () {
-              Scaffold.of(context).hideCurrentSnackBar();
-              try {
-                String str = _controller.text;
-                int ans = int.parse(str);
-                if (ans != _currentQuestion.ans) {
-                  _tries++;
-                  _animation.fling(
-                    velocity: _animation.isDismissed ? 1 : -1,
-                  );
-                  return;
-                }
-                _performance.addQuestionData(
-                  QuestionData(
-                    question: _currentQuestion.copy(),
-                    duration: DateTime.now().difference(_currentTime),
-                    tries: _tries,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Icon(Icons.arrow_forward, size: 52.0),
+              SizedBox(width: 12.0),
+              Container(
+                width: 120,
+                child: TextField(
+                  controller: _controller,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 32.0),
+                  keyboardType: TextInputType.number,
+                  onChanged: _onInputChanged,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(6.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                      borderSide: BorderSide(
+                        color: _cantUnderstand
+                            ? Colors.red
+                            : Theme.of(context).accentColor,
+                      ),
+                    ),
                   ),
-                );
-                _currentTime = DateTime.now();
-                _tries = 0;
-                _nextQuestion(context);
-                _controller.clear();
-              } catch (_) {
-                Scaffold.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text("Could not understand your answer"),
-                  ),
-                );
-                return;
-              }
-            },
-            child: Text("Check"),
+                ),
+              ),
+              SizedBox(width: 12.0),
+              Icon(Icons.arrow_back, size: 52.0),
+            ],
           ),
         );
       },
@@ -147,8 +179,6 @@ class _HomeRouteState extends State<HomeRoute>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   _buildTextField(),
-                  SizedBox(height: 22.0),
-                  _buildCheckButton(),
                 ],
               ),
             ),

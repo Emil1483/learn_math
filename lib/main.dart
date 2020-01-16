@@ -40,7 +40,6 @@ class _MyAppState extends State<MyApp> {
   Future<void> _initNotifications() async {
     final FirebaseMessaging fb = FirebaseMessaging();
     fb.requestNotificationPermissions();
-    print(await fb.getToken());
   }
 
   void _initInterstitialAd() {
